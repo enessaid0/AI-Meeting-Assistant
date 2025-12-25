@@ -1,4 +1,5 @@
 import os
+import datetime
 import whisper
 import gradio as gr
 import google.generativeai as genai
@@ -8,7 +9,7 @@ os.environ["PATH"] += os.pathsep + r'C:\ffmpeg\bin'
 
 # 2. Yapay Zeka Yapılandırması
 # API anahtarın burada tanımlı
-genai.configure(api_key="AIzaSyBxLCsRVMa_ZN7QbdssXn9_64Ckaz3d-lU")
+genai.configure(api_key="AIzaSyCagBBahpGgInG11hp-z-_R8OnUlqcLp_E")
 
 # Model adı 1.5-flash olarak güncellendi çünkü 2.5 diye bir model henüz yok (404 hatasını önler)
 model_gemini = genai.GenerativeModel('gemini-2.5-flash')
@@ -26,7 +27,20 @@ custom_css = """
     border: 1px solid #2d3748 !important;
     background-color: #1a202c !important;
     color: white !important;
-}
+    }
+.signature {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background: linear-gradient(90deg, #4f46e5 0%, #3b82f6 100%);
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);  
+    z-index: 1000;
+}    
 button.primary {
     background: linear-gradient(90deg, #4f46e5 0%, #3b82f6 100%) !important;
     border: none !important;
@@ -48,15 +62,12 @@ def analiz_et(ses_yolu):
 
         # Gemini Analiz İsteği
         print("Yapay zeka analiz yapıyor...")
-        # Gemini'a net bir başlık kullanmasını söylüyoruz
         prompt = f"Aşağıdaki metni özetle ve varsa yapılacak somut görevleri 'GÖREVLER:' başlığı altında listele:\n\n{tam_metin}"
         response = model_gemini.generate_content(prompt)
         analiz_sonucu = response.text
 
-        # --- BURASI KRİTİK: KUTULARA DAĞITMA MANTIĞI ---
-        # Gemini genelde **GÖREVLER:** veya GÖREVLER: şeklinde başlık atar.
+        # --- KUTULARA DAĞITMA MANTIĞI ---
         if "GÖREVLER" in analiz_sonucu.upper():
-            # Büyük harf duyarsız bölme işlemi yapıyoruz
             if "**GÖREVLER:**" in analiz_sonucu:
                 parcalar = analiz_sonucu.split("**GÖREVLER:**")
             elif "GÖREVLER:" in analiz_sonucu:
@@ -74,12 +85,22 @@ def analiz_et(ses_yolu):
             ozet = analiz_sonucu
             gorevler = "Metin içerisinde belirgin görev bulunamadı."
 
+        # --- DOĞRU YER: DOSYAYA EKLEME (Append Modu) ---
+        # "a" modu sayesinde her analiz dosyanın sonuna eklenir, eskiler silinmez.
+        with open("analiz_sonucu.txt", "a", encoding="utf-8") as dosya:
+            dosya.write("\n" + "="*60 + "\n")  # Analizleri ayırmak için görsel çizgi
+            dosya.write("YENİ ANALİZ KAYDI\n")
+            dosya.write(f"--- TAM METİN ---\n{tam_metin}\n\n")
+            dosya.write(f"--- AKILLI ÖZET ---\n{ozet}\n\n")
+            dosya.write(f"--- YAPILACAKLAR LİSTESİ ---\n{gorevler}\n")
+            dosya.write("="*60 + "\n")
+
+        print("Analiz başarıyla 'analiz_sonucu.txt' dosyasına eklendi.")
+
         return tam_metin, ozet, gorevler
 
     except Exception as e:
-        # Hata kontrolü
         return f"Teknik bir sorun oluştu: {str(e)}", "Hata", "Hata"
-
 # 4. Arayüz Tasarımı (Custom CSS + Blocks yapısı)
 with gr.Blocks(css=custom_css, theme="soft") as arayuz:
     gr.Markdown("# 🎙️ Gelişmiş AI Toplantı Asistanı", elem_id="title_area")
@@ -99,6 +120,7 @@ with gr.Blocks(css=custom_css, theme="soft") as arayuz:
         inputs=ses_input,
         outputs=[output_metin, output_ozet, output_gorev]
     )
+    gr.HTML('<div class="signature">Enes Sait Okur</div>')
 
 if __name__ == "__main__":
     arayuz.launch()
