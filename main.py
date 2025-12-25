@@ -4,21 +4,21 @@ import whisper
 import gradio as gr
 import google.generativeai as genai
 
-# 1. FFmpeg Yolunu Zorla Tanıtıyoruz (PATH hatasını önlemek için)
+# FFmpeg Yolunu Zorla Tanıtıyoruz (PATH hatasını önlemek için)
 os.environ["PATH"] += os.pathsep + r'C:\ffmpeg\bin'
 
-# 2. Yapay Zeka Yapılandırması
-# API anahtarın burada tanımlı
+
+# API
 genai.configure(api_key="AIzaSyCagBBahpGgInG11hp-z-_R8OnUlqcLp_E")
 
-# Model adı 1.5-flash olarak güncellendi çünkü 2.5 diye bir model henüz yok (404 hatasını önler)
+
 model_gemini = genai.GenerativeModel('gemini-2.5-flash')
 
-# 3. Whisper Modelini Yükle
+#  Whisper Modeli
 print("Yapay zeka modelleri hazırlanıyor...")
 whisper_model = whisper.load_model("base")
 
-# --- ÖZEL TASARIM (CSS) KODLARI ---
+# CSS KODLARI
 custom_css = """
 .gradio-container { background-color: #0b0f19 !important; }
 #title_area { text-align: center; color: #ffffff; }
@@ -55,18 +55,18 @@ def analiz_et(ses_yolu):
         if ses_yolu is None:
             return "Lütfen bir ses dosyası yükleyin.", "", ""
 
-        # Ses deşifre ediliyor
+
         print("Ses deşifre ediliyor...")
         sonuc = whisper_model.transcribe(ses_yolu, fp16=False)
         tam_metin = sonuc["text"]
 
-        # Gemini Analiz İsteği
+        # Gemini Analiz
         print("Yapay zeka analiz yapıyor...")
         prompt = f"Aşağıdaki metni özetle ve varsa yapılacak somut görevleri 'GÖREVLER:' başlığı altında listele:\n\n{tam_metin}"
         response = model_gemini.generate_content(prompt)
         analiz_sonucu = response.text
 
-        # --- KUTULARA DAĞITMA MANTIĞI ---
+        # KUTULARA DAĞITMA MANTIĞI
         if "GÖREVLER" in analiz_sonucu.upper():
             if "**GÖREVLER:**" in analiz_sonucu:
                 parcalar = analiz_sonucu.split("**GÖREVLER:**")
@@ -85,10 +85,10 @@ def analiz_et(ses_yolu):
             ozet = analiz_sonucu
             gorevler = "Metin içerisinde belirgin görev bulunamadı."
 
-        # --- DOĞRU YER: DOSYAYA EKLEME (Append Modu) ---
-        # "a" modu sayesinde her analiz dosyanın sonuna eklenir, eskiler silinmez.
+
+        # "a" modu sayesinde her analiz dosyanın sonuna eklenir.
         with open("analiz_sonucu.txt", "a", encoding="utf-8") as dosya:
-            dosya.write("\n" + "="*60 + "\n")  # Analizleri ayırmak için görsel çizgi
+            dosya.write("\n" + "="*60 + "\n")
             dosya.write("YENİ ANALİZ KAYDI\n")
             dosya.write(f"--- TAM METİN ---\n{tam_metin}\n\n")
             dosya.write(f"--- AKILLI ÖZET ---\n{ozet}\n\n")
@@ -101,7 +101,7 @@ def analiz_et(ses_yolu):
 
     except Exception as e:
         return f"Teknik bir sorun oluştu: {str(e)}", "Hata", "Hata"
-# 4. Arayüz Tasarımı (Custom CSS + Blocks yapısı)
+# Arayüz Tasarımı
 with gr.Blocks(css=custom_css, theme="soft") as arayuz:
     gr.Markdown("# 🎙️ Gelişmiş AI Toplantı Asistanı", elem_id="title_area")
 
