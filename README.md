@@ -5,7 +5,7 @@ Bu proje, **İskenderun Teknik Üniversitesi (İSTE)**, Bilgisayar Mühendisliğ
 ## 📌 Proje Hakkında
 Bu uygulama, ses kayıtlarını (toplantı, ders, notlar) yapay zeka kullanarak analiz eder. Süreç iki aşamalı çalışır:
 1. **OpenAI Whisper:** Ses dosyasını yerel sistemde yüksek doğrulukla metne dönüştürür.
-2. **Google Gemini 1.5 Flash:** Oluşan metni analiz ederek profesyonel bir özet ve yapılacaklar listesi oluşturur.
+2. **Google Gemini 2.5 Flash:** Oluşan metni analiz ederek profesyonel bir özet ve yapılacaklar listesi oluşturur.
 
 ## 🛠️ Kullanılan Teknolojiler
 - **Python 3.10.11**
