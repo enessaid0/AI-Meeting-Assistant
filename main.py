@@ -9,7 +9,7 @@ os.environ["PATH"] += os.pathsep + r'C:\ffmpeg\bin'
 
 
 # API
-genai.configure(api_key="AIzaSyCagBBahpGgInG11hp-z-_R8OnUlqcLp_E")
+genai.configure(api_key="")
 
 
 model_gemini = genai.GenerativeModel('gemini-2.5-flash')
