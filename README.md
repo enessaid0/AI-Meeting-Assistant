@@ -1,6 +1,6 @@
 # Akıllı Toplantı ve Ders Asistanı 🎙️🤖
 
-Bu proje, **İskenderun Teknik Üniversitesi (İSTE)**, Bilgisayar Mühendisliği Bölümü **Üretken Yapay Zekaya Giriş** dersi bitirme ödevi kapsamında geliştirilmiştir.
+Bu proje, **İskenderun Teknik Üniversitesi (İSTE)**, Bilgisayar Mühendisliği Bölümü **Mühendislikte Bilgisayar Uygulamaları I** dersi bitirme ödevi kapsamında geliştirilmiştir.
 
 ## 📌 Proje Hakkında
 Bu uygulama, ses kayıtlarını (toplantı, ders, notlar) yapay zeka kullanarak analiz eder. Süreç iki aşamalı çalışır:
@@ -10,7 +10,7 @@ Bu uygulama, ses kayıtlarını (toplantı, ders, notlar) yapay zeka kullanarak 
 ## 🛠️ Kullanılan Teknolojiler
 - **Python 3.10.11**
 - **Whisper (OpenAI):** Ses deşifresi
-- **Gemini 1.5 Flash (Google):** LLM tabanlı analiz
+- **Gemini 2.5 Flash (Google):** LLM tabanlı analiz
 - **Gradio:** Web arayüzü
 - **FFmpeg:** Ses işleme motoru
 
